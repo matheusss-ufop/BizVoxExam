@@ -28,10 +28,13 @@ public class ListShotsApiDribbble {
         shotsList = new ArrayList<>();
     }
 
+    // Executa a consulta a API em background, selecionando os 30 Shots.
     public void receiveShotsList (){
         new HttpAsyncTask().execute(url_param);
     }
 
+
+    // Metodo que realiza a requisição a Dribbble API e guarda todos os Shots recebidos em um ArrayList
     public void getListShots(String url_param) {
         URL url = null;
         InputStream inputStream = null;
@@ -41,6 +44,7 @@ public class ListShotsApiDribbble {
             HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
             inputStream = urlConnection.getInputStream();
             if (inputStream != null) {
+                // Converte o stream recebido em uma lista de Shots.
                 convertInputStreamToShotsList(inputStream);
             }
         } catch (IOException e) {
@@ -48,6 +52,8 @@ public class ListShotsApiDribbble {
         }
     }
 
+
+    // Metodo para realizar o download das imagens de cada Shot listado.
     public void downloadImagesFromListShots(){
         URL url = null;
         InputStream inputStream = null;
@@ -69,7 +75,7 @@ public class ListShotsApiDribbble {
                 }
             }
         }
-        Log.e("ListShots", "All images downloaded");
+        Log.i("ListShots", "All images downloaded");
     }
 
     public ArrayList<ShotItem> getShotsList() {
@@ -81,13 +87,13 @@ public class ListShotsApiDribbble {
     }
 
 
-    /**
-     * Classe responsável por fazer as requisições e download dos Shots do Dribbble
-     */
+    // Classe responsável por fazer as requisições e download dos Shots do Dribbble
+
     private class HttpAsyncTask extends AsyncTask<String, Void, String> {
 
         ProgressDialog progressDialog;
 
+        // Enquanto é realizado o download das informações em background, é exibido um ProgressDialog.
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -96,11 +102,14 @@ public class ListShotsApiDribbble {
 
         @Override
         protected String doInBackground(String... urls) {
+            // Realiza a consulta a Dribbble API e guarda as informações do Shot
             getListShots(urls[0]);
+            // Realiza o download de todas as imagem de todos os Shots
             downloadImagesFromListShots();
             return "doInBackground - OK";
         }
 
+        // Depois que tudo foi executado em background, o ProgressDialog é finalizado e é exibido uma lista com todos os Shots recebidos.
         @Override
         protected void onPostExecute(String result) {
             MainActivity.loadDribbbleData();
@@ -108,6 +117,8 @@ public class ListShotsApiDribbble {
         }
     }
 
+
+    // Recebe o inputstream de retorno da chamada a API e cria um lista com todos os Shots e seus atributos.
     private void convertInputStreamToShotsList(InputStream inputStream) throws IOException {
         BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
         String line = "";
@@ -126,7 +137,7 @@ public class ListShotsApiDribbble {
                     String[] lineArray = line.split(":");
                     lineArray[1] = lineArray[1].substring(0, lineArray[1].length() - 1);
 
-                    // Se encontrou um novo ID, então adicionamos o antigo shot a lista e criamos um novo shot
+                    // Se encontrou um novo ID, então adicionamos o antigo Shot a lista e criamos um novo Shot
                     if (shot != null) {
                         shotsList.add(shot);
                     }
@@ -145,6 +156,7 @@ public class ListShotsApiDribbble {
                 if (lineArray[0].equals("title")){
                     shot.setTitle(lineArray[1].trim());
                 }
+                // Guarda apenas a imagem "teaser" por ser a mais leve
                 else if (lineArray[0].equals("teaser")){
                     String imgURL = lineArray[1] + ":" + lineArray[2];
                     imgURL = imgURL.replaceAll("\"", "");
@@ -166,7 +178,7 @@ public class ListShotsApiDribbble {
             }
         }
 
-        // Adiciona o último shot encontrado a lista
+        // Adiciona o último Shot encontrado a lista
         if (shot != null){
             shotsList.add(shot);
         }

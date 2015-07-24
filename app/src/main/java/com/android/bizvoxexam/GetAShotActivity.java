@@ -27,7 +27,7 @@ public class GetAShotActivity extends Activity {
 
         int shotId = getIntent().getIntExtra("id", 0);
 
-        dribbbleGetAShot.getShot(shotId);
+        dribbbleGetAShot.getAShot(shotId);
 
         shot_title = (TextView) findViewById(R.id.shot_title);
         shot_image = (ImageView) findViewById(R.id.shot_image);
@@ -38,8 +38,7 @@ public class GetAShotActivity extends Activity {
     }
 
     public static void loadShotData(){
-
-        ShotItem shot = dribbbleGetAShot.getShot();
+        ShotItem shot = dribbbleGetAShot.getAShot();
 
         shot_title.setText(shot.getTitle());
         shot_image.setImageBitmap(shot.getImage());

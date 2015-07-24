@@ -23,25 +23,21 @@ public class GetAShotApiDribbble {
 
     private ShotItem shotItem = null;
 
-    private boolean finish = false;
-
     private int shotID;
 
     public GetAShotApiDribbble(Context context){
         this.context = context;
     }
 
-    public void getShot (int id){
-
+    // Realiza a consulta a API em background, selecionando o Shot desejado.
+    public void getAShot(int id){
         shotID = id;
-
-        String url_param = "https://api.dribbble.com/v1/shots/"+ id +"?access_token=c8d5cc7b12dc06f00244a5072a68c51c6b0064018a985ec5fd501ed88256b81d";
-
+        String url_param = "https://api.dribbble.com/v1/shots/"+ shotID +"?access_token=c8d5cc7b12dc06f00244a5072a68c51c6b0064018a985ec5fd501ed88256b81d";
         new HttpAsyncTask().execute(url_param);
     }
 
-    public void getShots(String url_param) {
-
+    // Realiza a requisição a API selecionando o Shot desejado
+    public void getShot(String url_param) {
         URL url = null;
         InputStream inputStream = null;
 
@@ -57,8 +53,12 @@ public class GetAShotApiDribbble {
         }
     }
 
-    public void downloadImageFromShot(){
+    public ShotItem getAShot() {
+        return shotItem;
+    }
 
+    // Realiza o download da imagem do Shot selecionado
+    public void downloadImageFromShot(){
         URL url = null;
         InputStream inputStream = null;
         Bitmap bitmap = null;
@@ -81,13 +81,13 @@ public class GetAShotApiDribbble {
     }
 
 
-    /**
-     * Classe responsável por fazer a requisição e download de um Shot do Dribbble em background
-     */
+
+    // Classe responsável por fazer a requisição e download de um Shot do Dribbble em background
     private class HttpAsyncTask extends AsyncTask<String, Void, String> {
 
         ProgressDialog progressDialog;
 
+        // Enquanto é realizado o download das informações em background, é exibido um ProgressDialog.
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -97,11 +97,9 @@ public class GetAShotApiDribbble {
         @Override
         protected String doInBackground(String... urls) {
             // Realiza a consulta a Dribbble API e guarda as informações do Shot
-            getShots(urls[0]);
-            // Realiza a consulta a Dribbble API e guarda as informações do Shot
-
+            getShot(urls[0]);
+            // Realiza o download da imagem correspondente ao Shot
             downloadImageFromShot();
-            finish = true;
             return "doInBackground - OK";
         }
 
@@ -113,6 +111,7 @@ public class GetAShotApiDribbble {
         }
     }
 
+    // Recebe o inputstream de retorno da chamada a API e cria um Shot com todos os atributos desejados.
     private void convertInputStreamToShot (InputStream inputStream) throws IOException {
         BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
         String line = "";
@@ -170,11 +169,8 @@ public class GetAShotApiDribbble {
         }
 
         inputStream.close();
-
     }
 
-    public ShotItem getShot() {
-        return shotItem;
-    }
+
 
 }

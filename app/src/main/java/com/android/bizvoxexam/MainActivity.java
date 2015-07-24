@@ -40,8 +40,6 @@ public class MainActivity extends Activity {
                     .setCancelable(false)
                     .setPositiveButton("Exit",new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog,int id) {
-                            // if this button is clicked, close
-                            // current activity
                             MainActivity.this.finish();
                         }
                     });
@@ -49,11 +47,9 @@ public class MainActivity extends Activity {
             AlertDialog alertDialog = alertDialogBuilder.create();
             alertDialog.show();
         }
-
     }
 
     public static void loadDribbbleData(){
-
         listView.setAdapter(new ShotsListAdapter(context, R.layout.list_shots_row, dribbbleListShots.getShotsList()));
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -64,7 +60,6 @@ public class MainActivity extends Activity {
                 context.startActivity(intent);
             }
         });
-
     }
 
 
